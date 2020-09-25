@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+    {% if user %}
+        <!-- Logout -->
+        <p class="text-right">
+            Привет, {{ user.ALogin }} <a href="/views/logout.php" class="text-danger">Выйти</a>
+        </p>
+        <!-- /Logout -->
+    {% else %}
+        <!-- Authorization -->
+        <p class="text-center">Вы не авторизированы. <a href="#" data-toggle="modal" data-target="#loginModal" >Войти</a></p>
+
+        <!-- Modal login form -->
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Авторизация</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="views/login.php" method="post">
+
+                        <div class="form-group">
+                            <label for="login">Логин</label>
+                            <input type="text"
+                                class="form-control"
+                                name="login"
+                                id="login"
+                                placeholder="Логин"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Пароль</label>
+                            <input type="password"
+                                class="form-control"
+                                name="password"
+                                id="password"
+                                placeholder="Пароль"
+                                required
+                            >
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" name="signin" class="btn btn-primary px-5">Войти</button>
+                        </div>
+
+                    </form>
+
+                </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Modal login form -->
+
+    {% endif %}
+
+    <!-- Header -->
+    <h3 class="text-center">Студенты по классам</h3>
+    <!-- Row: get students by class -->
+    <div class="row justify-content-center mb-3">
+        <!-- Column -->
+        <div class="col-sm-12 col-lg-8">
+        
+        <form>
+            <div class="form-row justify-content-center">
+                <div class="col-sm-12 col-md-8 mb-3 mb-md-0">
+                    
+                    <select name="classId" class="form-control custom-select">
+                        <option selected value="*">Все классы</option>
+                        {% for class in classes %}
+                            <option value="{{ class.CId }}">
+                                {{ currentYear - class.CLevel }} "{{ class.Cletter }}"
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-8 col-md-4">
+                    <button type="button" class="btn btn-primary w-100" name="generateReport" id="generateReport">Сформировать</button>
+                </div>
+            </div>
+        </form>
+
+        </div>
+        <!-- /Column -->
+
+    </div>
+    <!-- /Row -->
+
+    <!-- Header -->
+    <h3 class="text-center">Таблица студенты <button role="button" class="btn btn-sm btn-danger" onclick="updateTable()">Очистить</button></h3>
+    <!-- Row: table "students" -->
+    <div class="row justify-content-center mb-3">
+
+        <!-- Column -->
+        <div class="col-sm-12 col-lg-12">
+        
+            <table class="table table-striped table-hover table-responsive-md" id="table">
+                <caption>Список студентов</caption>
+                <tr class="thead-dark">
+                    <th scope="col">Код</th>
+                    <th scope="col">Фамилия</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Отчество</th>
+                    <th scope="col">Дата рождения</th>
+                    <th scope="col">Класс</th>
+                </tr>
+                {% for student in students %}
+                    <tr>
+                        <th scope="row">{{ student.SId }}</th>
+                        <td>{{ student.SLastName }}</td>
+                        <td>{{ student.SFirstName }}</td>
+                        <td>{{ student.SMidName }}</td>
+                        <td>{{ student.SBirthDate }}</td>
+                        <td>{{ currentYear - student.CLevel }} "{{ student.Cletter }}"</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <!-- /Column -->
+    </div>
+    <!-- /Row -->
+
+    <!-- Header -->
+    <h3 class="text-center">Добавить студента</h3>
+    <!-- Row: add student -->
+    <div class="row justify-content-center mb-3">
+        
+        <div class="col-sm-12 col-lg-8">
+        
+            <form action="/ajax/addStudent.php" method="post">
+                            
+                <div class="form-row">
+                
+                    <div class="form-group col-sm-12 col-md-4">
+                        <label for="LastName">Фамилия</label>
+                        <input
+                            class="form-control"
+                            id="LastName"
+                            name="LastName"
+                            placeholder="Иванов"
+                            required
+                            type="text"
+                        >
+                    </div>
+
+                    <div class="form-group col-sm-12 col-md-4">
+                        <label for="FirstName">Имя</label>
+                        <input
+                            class="form-control"
+                            id="FirstName"
+                            name="FirstName"
+                            placeholder="Иван"
+                            required
+                            type="text"
+                        >
+                    </div>
+
+                    <div class="form-group col-sm-12 col-md-4">
+                        <label for="MidName">Отчество</label>
+                        <input
+                            class="form-control"
+                            id="MidName"
+                            name="MidName"
+                            placeholder="Иванович"
+                            required
+                            type="text"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="BirthDate">Дата рождения</label>
+                    <input
+                        class="form-control"
+                        id="BirthDate"
+                        max="2014-01-31"
+                        min="2001-01-01"
+                        name="BirthDate"
+                        placeholder=""
+                        required
+                        type="date"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="classId">Код класса</label>
+                    <select name="classId" id="classId" class="form-control custom-select">
+                    
+                        {% for class in classes %}
+                            <option value="{{ class.CId }}">{{ currentYear - class.CLevel }} "{{ class.Cletter }}" (Код: {{ class.CId }})</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+            <div class="text-center">
+                {% if user %}
+                    <span type="button" class="btn btn-success px-3 px-lg-5" id="addStudent">Добавить</span>
+                    <span type="button" class="btn btn-warning px-3 px-lg-5" id="generateName">🎲 Случайно</span>
+                {% else %}
+                    <span data-toggle="modal" data-target="#loginModal" class="btn btn-success px-5">Добавить</span>
+                {% endif %}
+            </div>
+
+            </form>
+        </div>
+    </div>
+    <!-- /Row -->
+
+    <!-- Header -->
+    <h3 class="text-center">Отчёты</h3>
+    <!-- Row: reports -->
+    <div class="row justify-content-center">
+        
+        <div class="col-sm-12 col-lg-8">
+        
+            <form action="/views/report.php" method="POST">
+                <div class="form-group">
+
+                    <div class="form-check custom-control custom-radio">
+                        <input type="radio" required name="report" value="the_youngest_first_grader" id="the_youngest_first_grader" class="custom-control-input">
+                        <label for="the_youngest_first_grader" class="custom-control-label">Самый младший первоклассник (из всей школы)</label>
+                    </div>
+
+                    <div class="form-check custom-control custom-radio">
+                        <input type="radio" required name="report" value="number_of_second_graders" id="number_of_second_graders" class="custom-control-input">
+                        <label for="number_of_second_graders" class="custom-control-label">Количество учеников во всех вторых классах</label>
+                    </div>
+
+                    <div class="form-check custom-control custom-radio mb-2">
+                        <input type="radio" required name="report" value="birthday_people_in_July" id="birthday_people_in_July" class="custom-control-input">
+                        <label for="birthday_people_in_July" class="custom-control-label">Cписок именинников в июле</label>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success px-5">Оформить отчёт</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /Row -->
+
+{% endblock main %}
