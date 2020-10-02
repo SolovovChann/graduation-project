@@ -1,6 +1,6 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/connection.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/autorun.php');
 
 # Get POST data or Null
 $LastName   = clean($_POST['LastName']);
@@ -11,7 +11,7 @@ $classId    = clean($_POST['classId']);
 
 # Check the completion of all fields
 if(!$LastName || !$FirstName || !$MidName || !$BirthDate || !$classId)
-    die('Вы ввели не все данные');
+    message('Вы ввели не все данные', 'danger');
 
 # Create query
 $query = sprintf('SELECT * FROM students WHERE
@@ -21,7 +21,7 @@ $query = sprintf('SELECT * FROM students WHERE
 
 # Check for FIO and BirthDate duplicate
 $result = executeQuery($query);
-if($result->num_rows > 0) die('Студент с таким ФИО и датой рождения уже есть в Базе данных');
+if($result->num_rows > 0) message('Студент с таким ФИО и датой рождения уже есть в Базе данных', 'danger');
 
 # Create query
 $query = sprintf('INSERT INTO
@@ -31,23 +31,15 @@ $query = sprintf('INSERT INTO
 $result = executeQuery($query);
 
 
-if(!isset($result)) die('Не удалось создать новую запись');
+if(!isset($result)) message('Не удалось создать новую запись', 'danger');
 
 # Return updated table
 $result = executeQuery("SELECT * FROM students INNER JOIN classes ON students.CId = classes.CId WHERE 1 ORDER BY `SId`");
-if(!$result) die('Невозможно обновить Базу данных');
+if(!$result) message('Невозможно обновить Базу данных', 'danger');
+
+echo $twig->render('table.html', [
+    'list' => $result,
+    'currentYear' => date('Y'),
+]);
 
 ?>
-
-<?php foreach($result as $column): ?>
-
-    <tr>
-        <th scope="row"><?= $column['SId'] ?></th>
-        <td><?= $column['SLastName'] ?></td>
-        <td><?= $column['SFirstName'] ?></td>
-        <td><?= $column['SMidName'] ?></td>
-        <td><?= $column['SBirthDate'] ?></td>
-        <td><?= date("Y") - $column['CLevel'] . ' "' . $column['Cletter'] . '"'?></td>
-    </tr>
-
-<?php endforeach; ?>

@@ -7,9 +7,9 @@ unset($_SESSION['user']);
 session_destroy();
 
 # If user deleted relocate to homepage
-if(!$_SESSION['user']) header('Location: /');
+if(!isset($_SESSION['user'])) header('Location: /');
 
 # Raise error if not
-else die('Выход из системы выполнен не был!');
+else message('Выход из системы выполнен не был!', 'danger');
 
 ?>

@@ -6,7 +6,6 @@
     <p class="text-secondary">
         Запрос к БД: <small class="text-secondary">{{ query }}</small>
     </p>
-    <a href="/" class="text-danger">Назад на главную</a>
     <table class="table table-bordered table-responsive-md">
         <tr class="thead-dark">
             <th>Код</th>
@@ -14,17 +13,8 @@
             <th>Имя</th>
             <th>Отчество</th>
             <th>Дата рождения</th>
-            <th>Класс</th>
+            <th colspan="2">Класс</th>
         </tr>
-        {% for item in students %}
-        <tr>
-            <td>{{ item.SId }}</td>
-            <td>{{ item.SLastName }}</td>
-            <td>{{ item.SFirstName }}</td>
-            <td>{{ item.SMidName }}</td>
-            <td>{{ item.SBirthDate }}</td>
-            <td>{{ currentYear - item.CLevel }}"{{ item.Cletter }}" (Код: {{ item.CId }})</td>
-        </tr>
-        {% endfor %}
+        {% include 'table.html' %}
     </table>
 {% endblock main %}

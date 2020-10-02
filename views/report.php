@@ -12,17 +12,17 @@ students.SBirthDate = (SELECT MAX(SBirthDate) FROM students INNER JOIN classes O
 AND
 classes.CLevel=2019";
 
-else if($reportTheme == "number_of_second_graders") $query = "SELECT *
+elseif($reportTheme == "number_of_second_graders") $query = "SELECT *
 FROM students
 INNER JOIN classes ON students.CId=classes.CId
 WHERE classes.CLevel=2018";
 
-else if($reportTheme == "birthday_people_in_July") $query = "SELECT *
+elseif($reportTheme == "birthday_people_in_July") $query = "SELECT *
 FROM students
 INNER JOIN classes ON students.CId=classes.CId
 WHERE SBirthDate LIKE '%-07-%'";
 
-$student_list = resultToArray($query);
+$student_list = executeQuery($query, True);
 
 # Return render with paramethers
 echo $twig->render('report.html', [
@@ -30,7 +30,7 @@ echo $twig->render('report.html', [
     'theme'     => $reportTheme,
     'query'     => $query,
     'user'      => $_SESSION['user'],
-    'students'  => $student_list,
+    'list'      => $student_list,
     'currentYear' => date("Y"),
 ]);
 

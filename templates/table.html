@@ -1,0 +1,11 @@
+{% for student in list %}
+    <tr>
+        <th scope="row">{{ student.SId }}</th>
+        <td>{{ student.SLastName }}</td>
+        <td>{{ student.SFirstName }}</td>
+        <td>{{ student.SMidName }}</td>
+        <td>{{ student.SBirthDate|date("j.m.Y") }}</td>
+        <td>{{ currentYear - student.CLevel }} "{{ student.Cletter }}"</td>
+        <td><a href="/views/student_delete.php?id={{ student.SId }}" class="text-danger">Удалить</a></td>
+    </tr>
+{% endfor %}
