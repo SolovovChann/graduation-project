@@ -16,6 +16,10 @@ if(!$login or !$password or !$passwordCheck) message('Заполнены не в
 # Compare passwords
 if($password != $passwordCheck) message('Пароли не совпадают', 'danger');
 
+# Get student from DB
+$result = executeQuery(sprintf('SELECT `SId` FROM auth WHERE `ALogin` = \'%1$s\'', $login));
+if(!isset($result) or $result == []) message('Пользователь с таким логином уже существует', 'danger');
+
 # Hash password and unser second password
 $password = password_hash($password, PASSWORD_DEFAULT);
 unset($passwordCheck);

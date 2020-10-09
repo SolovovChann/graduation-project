@@ -3,24 +3,36 @@
 # All needed files already connected inside
 require_once($_SERVER['DOCUMENT_ROOT'] . "/includes/autorun.php");
 
-$reportTheme = clean($_POST['report']);
+$report_theme = clean($_POST['report']);
 
-if($reportTheme == "the_youngest_first_grader") $query = "SELECT * FROM students
-INNER JOIN classes ON students.CId=classes.CId
-WHERE
-students.SBirthDate = (SELECT MAX(SBirthDate) FROM students INNER JOIN classes ON students.CId=classes.CId WHERE classes.CLevel = 2019 )
-AND
-classes.CLevel=2019";
+switch ($report_theme) {
+    case 'the_youngest_first_grader':
+        $query = "SELECT * FROM students
+        INNER JOIN classes ON students.CId=classes.CId
+        WHERE
+        students.SBirthDate = (SELECT MAX(SBirthDate) FROM students INNER JOIN classes ON students.CId=classes.CId WHERE classes.CLevel = 2019 )
+        AND
+        classes.CLevel=2019";
+        break;
+    
+    case 'number_of_second_graders':
+        $query = "SELECT *
+        FROM students
+        INNER JOIN classes ON students.CId=classes.CId
+        WHERE classes.CLevel=2018";
+        break;
 
-elseif($reportTheme == "number_of_second_graders") $query = "SELECT *
-FROM students
-INNER JOIN classes ON students.CId=classes.CId
-WHERE classes.CLevel=2018";
-
-elseif($reportTheme == "birthday_people_in_July") $query = "SELECT *
-FROM students
-INNER JOIN classes ON students.CId=classes.CId
-WHERE SBirthDate LIKE '%-07-%'";
+    case 'birthday_people_in_July':
+        $query = "SELECT *
+        FROM students
+        INNER JOIN classes ON students.CId=classes.CId
+        WHERE SBirthDate LIKE '%-07-%'";
+        break;
+    
+    default:
+        message('Вы не ввели тему');
+        break;
+};
 
 $student_list = executeQuery($query, True);
 

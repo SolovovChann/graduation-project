@@ -13,7 +13,7 @@ $classId    = clean($_POST['classId']);
 if(!$LastName || !$FirstName || !$MidName || !$BirthDate || !$classId)
     message('Вы ввели не все данные', 'danger');
 
-# Create query
+# Duplicate student request
 $query = sprintf('SELECT * FROM students WHERE
     `SLastName` = \'%1$s\' AND `SFirstName` = \'%2$s\' AND `SMidName` = \'%3$s\' AND `SBirthDate` = \'%4$s\' LIMIT 1',
     $LastName, $FirstName, $MidName, $BirthDate
